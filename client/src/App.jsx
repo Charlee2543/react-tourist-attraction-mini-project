@@ -1,8 +1,52 @@
 import './App.css';
+import { debounce } from 'lodash';
+import axios from 'axios';
+import { useState, useEffect } from 'react';
 
+/* 
+เมื่อสร้าง ui c]h;
+-declare async function AND 
+    -set debuosing 1500 misec
+    -try get data server , set data server to array , set data to useState varieble ,log complete
+    -catch log error
+-declare useState array and input
+-declare usEffect to execute first and useStste input rerender
+-map opject from data
+-set onChaange to input 
+-declare function to setInput
+
+fetch(`https://demo.dataverse.org/api/search?q=${value}`)
+*/
 function App() {
-    const text =
-        'เริ่มเที่ยวเชิงอนุรักษ์แบบชิลล์ๆ กันที่แรก ที่ศูนย์อนุรักษ์ป่าชายเลน คลองโคน ด้วยกิจกรรมอัดแน่น ทั้งการล่องเรือชมป่าชายเลน รวมสร้างแหล่งอาหารให้สัตว์ทะเลด้วยการปลูกต้นแสม ต้นลำพู สัมผัสวิถีชีวิตชาวประมงในการเลี้ยงหอยนางรม และหอยแมลงภู่ แถมด้วยไฮไลท์น่ารักๆ นั่นก็คือ เจ้าลิงแสมที่ออกมาวิ่งเล่น ต้อนรับนักท่องเที่ยวชมความสมบูรณ์ของระบบนิเวศน์ที่นี่';
+    const [data, Setdata] = useState([]);
+    const [inputSearch, setInputSearch] = useState('');
+
+    const getData = debounce(async (keywords) => {
+        try {
+            const result = await axios.get(
+                `http://localhost:4001/trips?keywords=${
+                    keywords ? keywords : ' '
+                }`
+            );
+            console.log('result: ', result.data.data);
+            Setdata(result.data.data);
+            console.log('getData complete ');
+        } catch (error) {
+            console.log('error getData: ', error);
+        }
+    }, 1500);
+
+    useEffect(() => {
+        getData();
+    }, []);
+    useEffect(() => {
+        getData(inputSearch);
+    }, [inputSearch]);
+    console.log('inputSearch: ', inputSearch);
+    console.log('data: ', data);
+
+    // const text =
+    //     'เริ่มเที่ยวเชิงอนุรักษ์แบบชิลล์ๆ กันที่แรก ที่ศูนย์อนุรักษ์ป่าชายเลน คลองโคน ด้วยกิจกรรมอัดแน่น ทั้งการล่องเรือชมป่าชายเลน รวมสร้างแหล่งอาหารให้สัตว์ทะเลด้วยการปลูกต้นแสม ต้นลำพู สัมผัสวิถีชีวิตชาวประมงในการเลี้ยงหอยนางรม และหอยแมลงภู่ แถมด้วยไฮไลท์น่ารักๆ นั่นก็คือ เจ้าลิงแสมที่ออกมาวิ่งเล่น ต้อนรับนักท่องเที่ยวชมความสมบูรณ์ของระบบนิเวศน์ที่นี่';
 
     return (
         <main className="App bg-gray-100 p-6 flex flex-col items-center  ">
@@ -17,13 +61,15 @@ function App() {
                     type="text"
                     className="m-2 p-2 w-full text-[1.5rem] text-black border-b-1  border-gray-400 placeholder:text-gray-500 placeholder:text-center"
                     placeholder="หาที่เที่ยวแล้วไปกัน"
+                    value={inputSearch}
+                    onChange={(event) => setInputSearch(event.target.value)}
                 />
             </label>
             <section className="max-w-7xl w-[90%] mx-auto m-6 space-y-6 overflow-hidden">
                 <div className="p-4 bg-white rounded-lg shadow-md flex gap-4 ">
                     <img
                         src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/11/Test-Logo.svg/783px-Test-Logo.svg.png"
-                        alt="เกาะช้าง"
+                        alt=""
                         className="w-1/3 object-cover object-center rounded-3xl"
                     />
                     <div className="flex-1 overflow-hidden ">
@@ -31,13 +77,11 @@ function App() {
                             คู่มือเที่ยวเกาะช้าง กิน เที่ยว พักที่ไหนดี?
                             อ่านจบครบที่เดียว!
                         </h2>
-                        <p
-                            className={`text-lg  mt-1 w-full text-gray-600 truncate `}
-                        >
+                        <p className={`text-lg  mt-1 w-full text-gray-600  `}>
                             {/* {text.length > 100
                                 ? text.slice(0, 100) + '...'
                                 : text} */}
-                            {text}
+                            {/* {text} */}
                         </p>
                         <a
                             href=""
